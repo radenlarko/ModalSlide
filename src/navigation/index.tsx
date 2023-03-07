@@ -8,11 +8,18 @@ import {
   ListPhotoScreen,
 } from '../screens';
 import useGetPermission from '../hooks/useGetPermission';
+import useCreateChannelNotif from '../hooks/useCreateChannelNotif';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
 const Navigation = () => {
-  useGetPermission();
+  const {createChannel} = useCreateChannelNotif();
+
+  useGetPermission({
+    onFinish: async () => {
+      await createChannel();
+    },
+  });
   return (
     <NavigationContainer>
       <Tab.Navigator>

@@ -7,10 +7,13 @@ import {
   Dimensions,
   Modal,
   TouchableOpacity,
+  Platform,
+  Button,
 } from 'react-native';
 import React, {useCallback, useState} from 'react';
 import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
 import {TabParamList} from '../types';
+import notifee, {AndroidImportance} from '@notifee/react-native';
 
 type Props = BottomTabScreenProps<TabParamList, 'ListCardScreen'>;
 
@@ -51,6 +54,26 @@ const data: Data[] = [
 const ListCardScreen = ({}: Props) => {
   const [idx, setIdx] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
+
+  const onDisplayNotif = useCallback(async () => {
+    try {
+      await notifee.displayNotification({
+        title: 'Notification Title',
+        body: 'Main body content of the notification',
+        android: {
+          channelId: 'important',
+          // pressAction is needed if you want the notification to open the app when pressed
+          pressAction: {
+            id: 'default',
+          },
+          sound: Platform.Version < 26 ? 'appsound' : undefined,
+          importance: AndroidImportance.HIGH,
+        },
+      });
+    } catch (error) {
+      console.log('error notif', error);
+    }
+  }, []);
 
   const renderItem = useCallback<ListRenderItem<Data>>(({item, index}) => {
     return (
@@ -97,6 +120,7 @@ const ListCardScreen = ({}: Props) => {
         keyExtractor={item => item.value}
         horizontal
       />
+      <Button title="Display Notification" onPress={onDisplayNotif} />
     </View>
   );
 };

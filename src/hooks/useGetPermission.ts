@@ -1,5 +1,6 @@
 import {useEffect, useRef} from 'react';
 import {Camera} from 'react-native-vision-camera';
+import notifee, {AuthorizationStatus} from '@notifee/react-native';
 import {myToast} from '../utils/myToast';
 
 interface Config {
@@ -18,6 +19,22 @@ const useGetPermission = (config?: Config) => {
 
   useEffect(() => {
     const getPermissions = async () => {
+      await notifee.getNotificationSettings().then(async status => {
+        console.log('permission notif: ', status.authorizationStatus);
+
+        if (status.authorizationStatus >= AuthorizationStatus.AUTHORIZED) {
+          return;
+        }
+
+        const notifRequest = await notifee.requestPermission();
+        if (
+          notifRequest.authorizationStatus >= AuthorizationStatus.AUTHORIZED
+        ) {
+          myToast(`Permission Notif ${notifRequest.authorizationStatus}`);
+          return;
+        }
+      });
+
       await Camera.getCameraPermissionStatus().then(async status => {
         console.log('permission camera: ', status);
         if (status === 'authorized') {
