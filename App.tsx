@@ -6,10 +6,10 @@
  */
 
 import React from 'react';
-import ListCardScreen from './src/screens/ListCardScreen';
+import Navigation from './src/navigation';
 
 function App(): JSX.Element {
-  return <ListCardScreen />;
+  return <Navigation />;
 }
 
 export default App;

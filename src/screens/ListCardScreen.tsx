@@ -9,6 +9,10 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React, {useCallback, useState} from 'react';
+import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
+import {TabParamList} from '../types';
+
+type Props = BottomTabScreenProps<TabParamList, 'ListCardScreen'>;
 
 interface Data {
   label: string;
@@ -44,7 +48,7 @@ const data: Data[] = [
   },
 ];
 
-const ListCardScreen = () => {
+const ListCardScreen = ({}: Props) => {
   const [idx, setIdx] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
 
