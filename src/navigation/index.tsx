@@ -7,10 +7,12 @@ import {
   ListPhotoPinchScreen,
   ListPhotoScreen,
 } from '../screens';
+import useGetPermission from '../hooks/useGetPermission';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
 const Navigation = () => {
+  useGetPermission();
   return (
     <NavigationContainer>
       <Tab.Navigator>

@@ -8,40 +8,51 @@ import {
   Modal,
   TouchableOpacity,
   Image,
+  Button,
 } from 'react-native';
 import React, {useCallback, useState} from 'react';
 import {BottomTabScreenProps} from '@react-navigation/bottom-tabs';
 import {TabParamList} from '../types';
+import {ImageObj} from '../types/image';
+import ModalCamera from '../components/ModalCamera';
 
 type Props = BottomTabScreenProps<TabParamList, 'ListPhotoScreen'>;
 
-interface Data {
-  url: string;
-}
-
-const data: Data[] = [
+const initialData: ImageObj[] = [
   {
-    url: 'https://cdn.pixabay.com/photo/2023/02/02/17/11/chickens-7763394_960_720.jpg',
+    uri: 'https://cdn.pixabay.com/photo/2023/02/02/17/11/chickens-7763394_960_720.jpg',
+    name: 'chickens-7763394_960_720',
+    type: 'image/jpeg',
   },
   {
-    url: 'https://cdn.pixabay.com/photo/2023/02/14/18/55/flowers-7790227_960_720.jpg',
+    uri: 'https://cdn.pixabay.com/photo/2023/02/14/18/55/flowers-7790227_960_720.jpg',
+    name: 'flowers-7790227_960_720',
+    type: 'image/jpeg',
   },
   {
-    url: 'https://cdn.pixabay.com/photo/2023/02/04/09/20/castle-7766794_960_720.jpg',
+    uri: 'https://cdn.pixabay.com/photo/2023/02/04/09/20/castle-7766794_960_720.jpg',
+    name: 'castle-7766794_960_720',
+    type: 'image/jpeg',
   },
   {
-    url: 'https://cdn.pixabay.com/photo/2023/02/11/13/43/building-7782841_960_720.jpg',
+    uri: 'https://cdn.pixabay.com/photo/2023/02/11/13/43/building-7782841_960_720.jpg',
+    name: 'building-7782841_960_720',
+    type: 'image/jpeg',
   },
   {
-    url: 'https://cdn.pixabay.com/photo/2019/11/19/22/25/animal-4638681_960_720.jpg',
+    uri: 'https://cdn.pixabay.com/photo/2019/11/19/22/25/animal-4638681_960_720.jpg',
+    name: 'animal-4638681_960_720',
+    type: 'image/jpeg',
   },
 ];
 
 const ListPhotoScreen = ({}: Props) => {
+  const [data, setData] = useState(initialData);
   const [idx, setIdx] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenCamera, setIsOpenCamera] = useState(false);
 
-  const renderItem = useCallback<ListRenderItem<Data>>(({item, index}) => {
+  const renderItem = useCallback<ListRenderItem<ImageObj>>(({item, index}) => {
     return (
       <TouchableOpacity
         onPress={() => {
@@ -49,7 +60,7 @@ const ListPhotoScreen = ({}: Props) => {
           setIdx(index);
         }}>
         <Image
-          source={{uri: item.url}}
+          source={{uri: item.uri}}
           resizeMode="cover"
           style={styles.containerList}
         />
@@ -57,11 +68,11 @@ const ListPhotoScreen = ({}: Props) => {
     );
   }, []);
 
-  const renderItemModal = useCallback<ListRenderItem<Data>>(({item}) => {
+  const renderItemModal = useCallback<ListRenderItem<ImageObj>>(({item}) => {
     return (
       <View>
         <Image
-          source={{uri: item.url}}
+          source={{uri: item.uri}}
           resizeMode="contain"
           style={styles.containerListModal}
         />
@@ -69,7 +80,7 @@ const ListPhotoScreen = ({}: Props) => {
     );
   }, []);
   return (
-    <View>
+    <>
       <Modal
         visible={isOpen}
         onRequestClose={() => setIsOpen(false)}
@@ -78,20 +89,30 @@ const ListPhotoScreen = ({}: Props) => {
         <FlatList
           data={data}
           renderItem={renderItemModal}
-          keyExtractor={item => item.url}
+          keyExtractor={item => item.uri}
           horizontal
           pagingEnabled
           initialScrollIndex={idx}
         />
       </Modal>
-      <Text>ListPhotoScreen</Text>
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={item => item.url}
-        horizontal
+      <ModalCamera
+        visible={isOpenCamera}
+        onClose={() => setIsOpenCamera(false)}
+        onFinish={img => setData(prev => [img, ...prev])}
       />
-    </View>
+      <View>
+        <Text>ListPhotoScreen</Text>
+        <Button title="Add Photo" onPress={() => setIsOpenCamera(true)} />
+        <View style={{alignItems: 'center'}}>
+          <FlatList
+            data={data}
+            renderItem={renderItem}
+            keyExtractor={item => item.uri}
+            numColumns={4}
+          />
+        </View>
+      </View>
+    </>
   );
 };
 
